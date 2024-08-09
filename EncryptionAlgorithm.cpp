@@ -1,67 +1,96 @@
 #include "EncryptionAlgorithm.h"
 #include "Config.h"
+#include <iostream>
 
-// Constructor to initialize the encryption algorithm with necessary components
 EncryptionAlgorithm::EncryptionAlgorithm(int keySize) 
     : keyManagement(keySize) {
-    // Placeholder key for initialization (In practice, you would pass the actual key)
     std::vector<uint8_t> key = keyManagement.generateRandomKey();
     initialize(key);
 }
 
-// Function to initialize the algorithm with a given key
 void EncryptionAlgorithm::initialize(const std::vector<uint8_t>& key) {
-    // Generate the dynamic S-box based on the key
-    sbox = sboxGenerator.generateSBox(key);
+    std::cout << "Initializing encryption algorithm with the provided key..." << std::endl;
 
-    // Expand the key for the required number of rounds
+    sbox = sboxGenerator.generateSBox(key);
+    std::cout << "Dynamic S-box generated." << std::endl;
+
     int numRounds = MIN_ROUNDS + (key.size() * 8 / DEFAULT_KEY_SIZE) * (MAX_ROUNDS - MIN_ROUNDS);
     roundKeys = keyManagement.expandKey(key, numRounds);
+    std::cout << "Key expanded for " << numRounds << " rounds." << std::endl;
 }
 
-// Function to encrypt a block of data
 std::vector<uint8_t> EncryptionAlgorithm::encrypt(const std::vector<uint8_t>& data) {
+    std::cout << "Entering encrypt function..." << std::endl;
     std::vector<uint8_t> block = data;
-    
-    // Apply randomization to the block to resist side-channel attacks
+
+    std::cout << "Original Data: ";
+    for (auto byte : block) std::cout << std::hex << static_cast<int>(byte) << " ";
+    std::cout << std::endl;
+
     sideChannelResistance.applyRandomization(block);
+    std::cout << "Applied randomization. Data: ";
+    for (auto byte : block) std::cout << std::hex << static_cast<int>(byte) << " ";
+    std::cout << std::endl;
 
-    // Apply the encryption rounds
     applyRounds(block, true);
+    std::cout << "Completed encryption rounds. Data: ";
+    for (auto byte : block) std::cout << std::hex << static_cast<int>(byte) << " ";
+    std::cout << std::endl;
 
     return block;
 }
 
-// Function to decrypt a block of data
 std::vector<uint8_t> EncryptionAlgorithm::decrypt(const std::vector<uint8_t>& data) {
+    std::cout << "Entering decrypt function..." << std::endl;
     std::vector<uint8_t> block = data;
 
-    // Apply the decryption rounds
     applyRounds(block, false);
+    std::cout << "Completed decryption rounds. Data: ";
+    for (auto byte : block) std::cout << std::hex << static_cast<int>(byte) << " ";
+    std::cout << std::endl;
 
-    // Remove randomization to get the original data
-    sideChannelResistance.applyRandomization(block); // Note: This should match the encryption randomization
+    sideChannelResistance.applyRandomization(block);
+    std::cout << "Removed randomization. Data: ";
+    for (auto byte : block) std::cout << std::hex << static_cast<int>(byte) << " ";
+    std::cout << std::endl;
 
     return block;
 }
 
-// Function to apply encryption or decryption rounds
 void EncryptionAlgorithm::applyRounds(std::vector<uint8_t>& block, bool encrypting) {
+    std::cout << "Starting applyRounds..." << std::endl;
     int numRounds = roundKeys.size();
-    
+
     if (encrypting) {
-        // Forward rounds
         for (int round = 0; round < numRounds; ++round) {
-            // Apply S-box, mixing function, etc.
+            std::cout << "Applying round " << round << " with key: ";
+            for (auto byte : roundKeys[round]) {
+                std::cout << std::hex << static_cast<int>(byte) << " ";
+            }
+            std::cout << std::endl;
             mixingFunction.applyMixingFunction(block);
             parallelism.applySIMD(block);
+            std::cout << "Round " << round << " result: ";
+            for (auto byte : block) std::cout << std::hex << static_cast<int>(byte) << " ";
+            std::cout << std::endl;
         }
     } else {
-        // Reverse rounds
         for (int round = numRounds - 1; round >= 0; --round) {
-            // Apply reverse S-box, mixing function, etc.
+            std::cout << "Reversing round " << round << " with key: ";
+            for (auto byte : roundKeys[round]) {
+                std::cout << std::hex << static_cast<int>(byte) << " ";
+            }
+            std::cout << std::endl;
             parallelism.applySIMD(block);
+            std::cout << "Completed SIMD for round " << round << std::endl;
             mixingFunction.applyMixingFunction(block);
+            std::cout << "Completed Mixing Function for round " << round << std::endl;
+            std::cout << "Round " << round << " result: ";
+            for (auto byte : block) std::cout << std::hex << static_cast<int>(byte) << " ";
+            std::cout << std::endl;
         }
     }
+
+    std::cout << "Completed applyRounds." << std::endl;
 }
+
