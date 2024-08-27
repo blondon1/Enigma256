@@ -5,8 +5,8 @@
 #include <mutex>
 #include <vector>
 
-EncryptionAlgorithm::EncryptionAlgorithm(int keySize) 
-    : keyManagement(keySize) {
+EncryptionAlgorithm::EncryptionAlgorithm(int keySize, EncryptionMode::Mode mode)
+    : keyManagement(keySize), encryptionMode(mode, keyManagement.generateRandomKey()) {
     std::vector<uint8_t> key = keyManagement.generateRandomKey();
     initialize(key);
 }
@@ -35,7 +35,7 @@ std::vector<uint8_t> EncryptionAlgorithm::encrypt(const std::vector<uint8_t>& da
     for (auto byte : block) std::cout << std::hex << static_cast<int>(byte) << " ";
     std::cout << std::endl;
 
-    applyRounds(block, true);
+    block = encryptionMode.encrypt(block, roundKeys);
     std::cout << "Completed encryption rounds. Data: ";
     for (auto byte : block) std::cout << std::hex << static_cast<int>(byte) << " ";
     std::cout << std::endl;
@@ -47,7 +47,7 @@ std::vector<uint8_t> EncryptionAlgorithm::decrypt(const std::vector<uint8_t>& da
     std::cout << "Entering decrypt function..." << std::endl;
     std::vector<uint8_t> block = data;
 
-    applyRounds(block, false);
+    block = encryptionMode.decrypt(block, roundKeys);
     std::cout << "Completed decryption rounds. Data: ";
     for (auto byte : block) std::cout << std::hex << static_cast<int>(byte) << " ";
     std::cout << std::endl;
