@@ -8,13 +8,14 @@
 #include "MixingFunction.h"
 #include "Parallelism.h"
 #include "SideChannelResistance.h"
+#include "EncryptionMode.h"
 
 // Core Encryption Algorithm for Enigma256
 
 class EncryptionAlgorithm {
 public:
     // Constructor to initialize the encryption algorithm with necessary components
-    EncryptionAlgorithm(int keySize);
+    EncryptionAlgorithm(int keySize, EncryptionMode::Mode mode);
 
     // Function to encrypt a block of data
     std::vector<uint8_t> encrypt(const std::vector<uint8_t>& data);
@@ -28,6 +29,7 @@ private:
     MixingFunction mixingFunction;
     Parallelism parallelism;
     SideChannelResistance sideChannelResistance;
+    EncryptionMode encryptionMode;
 
     std::vector<std::vector<uint8_t>> roundKeys; // Expanded keys for each round
     std::vector<uint8_t> sbox; // Dynamic S-box
