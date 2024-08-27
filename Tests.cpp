@@ -9,7 +9,7 @@ void testEncryptionDecryption() {
     int keySize = DEFAULT_KEY_SIZE;
 
     // Initialize the Enigma256 encryption algorithm
-    EncryptionAlgorithm enigma256(keySize);
+    EncryptionAlgorithm enigma256(keySize, EncryptionMode::Mode::ECB);
 
     // Example data to encrypt (must be 256 bits / 32 bytes in size)
     std::vector<uint8_t> data = {
@@ -36,8 +36,8 @@ void testDifferentKeys() {
     int keySize2 = 256;
 
     // Initialize the Enigma256 encryption algorithm with different key sizes
-    EncryptionAlgorithm enigma256_1(keySize1);
-    EncryptionAlgorithm enigma256_2(keySize2);
+    EncryptionAlgorithm enigma256_1(keySize1, EncryptionMode::Mode::ECB);
+    EncryptionAlgorithm enigma256_2(keySize2, EncryptionMode::Mode::ECB);
 
     // Example data to encrypt (must be 256 bits / 32 bytes in size)
     std::vector<uint8_t> data = {
