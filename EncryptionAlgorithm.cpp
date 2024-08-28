@@ -1,12 +1,11 @@
 #include "EncryptionAlgorithm.h"
-#include "Config.h"
+#include "Timer.h"
 #include <iostream>
-#include <thread>
 #include <mutex>
-#include <vector>
+#include "Config.h"
 
 EncryptionAlgorithm::EncryptionAlgorithm(int keySize, EncryptionMode::Mode mode)
-    : keyManagement(keySize), encryptionMode(mode, keyManagement.generateRandomKey()) {
+    : keyManagement(keySize), mode(mode, keyManagement.generateRandomKey()) {
     std::vector<uint8_t> key = keyManagement.generateRandomKey();
     initialize(key);
 }
@@ -23,40 +22,31 @@ void EncryptionAlgorithm::initialize(const std::vector<uint8_t>& key) {
 }
 
 std::vector<uint8_t> EncryptionAlgorithm::encrypt(const std::vector<uint8_t>& data) {
+    Timer timer; // Start the timer
     std::cout << "Entering encrypt function..." << std::endl;
     std::vector<uint8_t> block = data;
 
-    std::cout << "Original Data: ";
-    for (auto byte : block) std::cout << std::hex << static_cast<int>(byte) << " ";
-    std::cout << std::endl;
-
+    // Perform encryption
     sideChannelResistance.applyRandomization(block);
-    std::cout << "Applied randomization. Data: ";
-    for (auto byte : block) std::cout << std::hex << static_cast<int>(byte) << " ";
-    std::cout << std::endl;
+    applyRounds(block, true);
 
-    block = encryptionMode.encrypt(block, roundKeys);
-    std::cout << "Completed encryption rounds. Data: ";
-    for (auto byte : block) std::cout << std::hex << static_cast<int>(byte) << " ";
-    std::cout << std::endl;
+    double timeTaken = timer.elapsed(); // Get elapsed time
+    std::cout << "Encryption completed in " << timeTaken << " ms." << std::endl;
 
     return block;
 }
 
 std::vector<uint8_t> EncryptionAlgorithm::decrypt(const std::vector<uint8_t>& data) {
+    Timer timer; // Start the timer
     std::cout << "Entering decrypt function..." << std::endl;
     std::vector<uint8_t> block = data;
 
-    block = encryptionMode.decrypt(block, roundKeys);
-    std::cout << "Completed decryption rounds. Data: ";
-    for (auto byte : block) std::cout << std::hex << static_cast<int>(byte) << " ";
-    std::cout << std::endl;
+    applyRounds(block, false);
+
+    double timeTaken = timer.elapsed(); // Get elapsed time
+    std::cout << "Decryption completed in " << timeTaken << " ms." << std::endl;
 
     sideChannelResistance.removeRandomization(block);
-    std::cout << "Removed randomization. Data: ";
-    for (auto byte : block) std::cout << std::hex << static_cast<int>(byte) << " ";
-    std::cout << std::endl;
-
     return block;
 }
 

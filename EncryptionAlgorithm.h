@@ -29,7 +29,7 @@ private:
     MixingFunction mixingFunction;
     Parallelism parallelism;
     SideChannelResistance sideChannelResistance;
-    EncryptionMode encryptionMode;
+    EncryptionMode mode;
 
     std::vector<std::vector<uint8_t>> roundKeys; // Expanded keys for each round
     std::vector<uint8_t> sbox; // Dynamic S-box

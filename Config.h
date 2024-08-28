@@ -19,3 +19,4 @@ const int MIN_ROUNDS = 12;
 const unsigned int SBOX_SEED = 0x12345678;
 
 #endif // CONFIG_H
+

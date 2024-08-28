@@ -11,7 +11,7 @@ int main() {
     std::cout << "Key size: " << keySize << " bits" << std::endl;
 
     // Initialize the Enigma256 encryption algorithm
-    EncryptionAlgorithm enigma256(keySize, EncryptionMode::Mode::ECB);
+    EncryptionAlgorithm enigma256(keySize, EncryptionMode::ECB);  // Specify mode if needed
     std::cout << "Encryption algorithm initialized." << std::endl;
 
     // Example data to encrypt (must be 256 bits / 32 bytes in size)

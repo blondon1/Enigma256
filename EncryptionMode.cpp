@@ -1,8 +1,8 @@
 #include "EncryptionMode.h"
 #include <algorithm>
+#include <vector>
 
-// Constructor implementation
-EncryptionMode::EncryptionMode(EncryptionMode::Mode mode, const std::vector<uint8_t>& key)
+EncryptionMode::EncryptionMode(Mode mode, const std::vector<uint8_t>& key)
     : mode(mode), key(key) {}
 
 // Example encryption function

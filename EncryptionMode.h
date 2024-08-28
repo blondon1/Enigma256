@@ -6,17 +6,14 @@
 
 class EncryptionMode {
 public:
-    enum class Mode {
-        ECB,
-        CBC,
-        CFB,
-        OFB
-        // Add other modes as needed
-    };
+    enum Mode { ECB, CBC }; // Example modes
 
     EncryptionMode(Mode mode, const std::vector<uint8_t>& key);
 
+    // Encryption function (implement your mode-specific encryption logic here)
     std::vector<uint8_t> encrypt(const std::vector<uint8_t>& data, const std::vector<std::vector<uint8_t>>& roundKeys);
+
+    // Decryption function (implement your mode-specific decryption logic here)
     std::vector<uint8_t> decrypt(const std::vector<uint8_t>& data, const std::vector<std::vector<uint8_t>>& roundKeys);
 
 private:
