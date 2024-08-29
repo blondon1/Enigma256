@@ -1,8 +1,13 @@
 #include "EncryptionAlgorithm.h"
 #include "Timer.h"
 #include <iostream>
-#include <mutex>
+#include <thread>    // Include thread here
+#include <mutex>     // Include mutex here
+#include <algorithm> // Include algorithm here
+#include <vector>    // Include vector here
 #include "Config.h"
+
+
 
 EncryptionAlgorithm::EncryptionAlgorithm(int keySize, EncryptionMode::Mode mode)
     : keyManagement(keySize), mode(mode, keyManagement.generateRandomKey()) {
@@ -54,6 +59,8 @@ void EncryptionAlgorithm::applyRounds(std::vector<uint8_t>& block, bool encrypti
     std::cout << "Starting applyRounds..." << std::endl;
     int numRounds = roundKeys.size();
 
+    SIMDLevel simdLevel = parallelism.detectBestSIMD(); // Detect SIMD level
+
     auto processRound = [&](int round, std::vector<uint8_t>& localBlock) {
         if (encrypting) {
             std::cout << "Applying round " << round << " with key: ";
@@ -67,7 +74,7 @@ void EncryptionAlgorithm::applyRounds(std::vector<uint8_t>& block, bool encrypti
         std::cout << std::endl;
 
         mixingFunction.applyMixingFunction(localBlock);
-        parallelism.applySIMD(localBlock);
+        parallelism.applySIMD(localBlock, simdLevel); // Pass SIMD level
 
         if (encrypting) {
             std::cout << "Round " << round << " result: ";

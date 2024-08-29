@@ -1,38 +1,47 @@
 #include "Parallelism.h"
 #include <iostream>
-#include <mutex>
+#include <algorithm>
+#include <vector>
+#include <cpuid.h>  // Include cpuid header for detecting SIMD support
 
-std::mutex mtx;
-
-void Parallelism::applySIMD(std::vector<uint8_t>& block) {
-    std::lock_guard<std::mutex> lock(mtx);
-    std::cout << "Entering applySIMD with block size: " << block.size() << std::endl;
-
-    for (auto& byte : block) {
-        byte ^= 0xFF;
+// Function to apply SIMD instructions to a block of data
+void Parallelism::applySIMD(std::vector<uint8_t>& block, SIMDLevel simdLevel) {
+    if (simdLevel == SIMDLevel::NONE) {
+        // No SIMD instructions applied
+        std::cout << "No SIMD instructions applied." << std::endl;
+    } else if (simdLevel == SIMDLevel::SSE2) {  // Corrected to SSE2
+        // Apply SSE2-specific operations
+        std::cout << "Applying SSE2 SIMD instructions." << std::endl;
+        // Example operation using SSE2 (this is a placeholder for actual SIMD code)
+        for (auto& byte : block) {
+            byte ^= 0x55; // Simple XOR operation as a placeholder
+        }
+    } else if (simdLevel == SIMDLevel::AVX2) {
+        // Apply AVX2-specific operations
+        std::cout << "Applying AVX2 SIMD instructions." << std::endl;
+        // Example operation using AVX2 (this is a placeholder for actual SIMD code)
+        for (auto& byte : block) {
+            byte ^= 0xAA; // Simple XOR operation as a placeholder
+        }
     }
-
-    std::cout << "Exiting applySIMD..." << std::endl;
 }
 
-void Parallelism::parallelizeRounds(std::vector<uint8_t>& block, int numRounds, std::function<void(std::vector<uint8_t>&, int)> roundFunction) {
-    std::vector<std::thread> threads;
-
-    for (int round = 0; round < numRounds; ++round) {
-        threads.emplace_back([&block, round, &roundFunction]() {
-            {
-                std::lock_guard<std::mutex> lock(mtx);
-                std::cout << "Starting round " << round << " with block size: " << block.size() << std::endl;
-            }
-            roundFunction(block, round);
-            {
-                std::lock_guard<std::mutex> lock(mtx);
-                std::cout << "Completed round " << round << std::endl;
-            }
-        });
+// Function to detect the best SIMD level supported by the CPU
+SIMDLevel Parallelism::detectBestSIMD() {
+    int cpuInfo[4] = {0, 0, 0, 0};
+    
+    // Detect if the CPU supports AVX2
+    __cpuid(7, cpuInfo[0], cpuInfo[1], cpuInfo[2], cpuInfo[3]);
+    if (cpuInfo[1] & (1 << 5)) {  // Check if AVX2 is supported
+        return SIMDLevel::AVX2;
     }
 
-    for (auto& thread : threads) {
-        thread.join();
+    // Detect if the CPU supports SSE2
+    __cpuid(1, cpuInfo[0], cpuInfo[1], cpuInfo[2], cpuInfo[3]);
+    if (cpuInfo[3] & (1 << 26)) {  // Check if SSE2 is supported
+        return SIMDLevel::SSE2;
     }
+
+    // No SIMD support found
+    return SIMDLevel::NONE;
 }

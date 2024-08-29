@@ -3,18 +3,17 @@
 
 #include <vector>
 #include <cstdint>
-#include <thread>
-#include <functional>
 
-// Parallelism and Optimization for Enigma256
+enum class SIMDLevel {
+    NONE,
+    SSE2,  // Use SSE2 as the correct SIMD level
+    AVX2
+};
 
 class Parallelism {
 public:
-    // Function to apply SIMD instructions to a block of data
-    void applySIMD(std::vector<uint8_t>& block);
-
-    // Function to parallelize encryption rounds using multi-threading
-    void parallelizeRounds(std::vector<uint8_t>& block, int numRounds, std::function<void(std::vector<uint8_t>&, int)> roundFunction);
+    SIMDLevel detectBestSIMD();
+    void applySIMD(std::vector<uint8_t>& block, SIMDLevel simdLevel);
 };
 
 #endif // PARALLELISM_H
