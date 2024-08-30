@@ -1,0 +1,82 @@
+[DEBUG] Dynamic S-box generated.
+[DEBUG] Key expanded for 20 rounds.
+[DEBUG] Applying round 1 with key: 
+[DEBUG] Round 1 result: 
+[DEBUG] Applying round 3 with key: 
+[DEBUG] Round 3 result: 
+[DEBUG] Applying round 0 with key: 
+[DEBUG] Round 0 result: 
+[DEBUG] Applying round 4 with key: 
+[DEBUG] Round 4 result: 
+[DEBUG] Applying round 5 with key: 
+[DEBUG] Round 5 result: 
+[DEBUG] Applying round 6 with key: 
+[DEBUG] Round 6 result: 
+[DEBUG] Applying round 7 with key: 
+[DEBUG] Round 7 result: 
+[DEBUG] Applying round 2 with key: 
+[DEBUG] Round 2 result: 
+[DEBUG] Applying round 8 with key: 
+[DEBUG] Round 8 result: 
+[DEBUG] Applying round 9 with key: 
+[DEBUG] Round 9 result: 
+[DEBUG] Applying round 10 with key: 
+[DEBUG] Round 10 result: 
+[DEBUG] Applying round 11 with key: 
+[DEBUG] Round 11 result: 
+[DEBUG] Applying round 12 with key: 
+[DEBUG] Round 12 result: 
+[DEBUG] Applying round 13 with key: 
+[DEBUG] Round 13 result: 
+[DEBUG] Applying round 14 with key: 
+[DEBUG] Round 14 result: 
+[DEBUG] Applying round 16 with key: 
+[DEBUG] Round 16 result: 
+[DEBUG] Applying round 15 with key: 
+[DEBUG] Round 15 result: 
+[DEBUG] Applying round 17 with key: 
+[DEBUG] Round 17 result: 
+[DEBUG] Applying round 18 with key: 
+[DEBUG] Round 18 result: 
+[DEBUG] Applying round 19 with key: 
+[DEBUG] Round 19 result: 
+[DEBUG] Reversing round 19 with key: 
+[DEBUG] Round 19 reversed result: 
+[DEBUG] Reversing round 18 with key: 
+[DEBUG] Round 18 reversed result: 
+[DEBUG] Reversing round 17 with key: 
+[DEBUG] Round 17 reversed result: 
+[DEBUG] Reversing round 16 with key: 
+[DEBUG] Round 16 reversed result: 
+[DEBUG] Reversing round 15 with key: 
+[DEBUG] Round 15 reversed result: 
+[DEBUG] Reversing round 9 with key: 
+[DEBUG] Round 9 reversed result: 
+[DEBUG] Reversing round 5 with key: 
+[DEBUG] Round 5 reversed result: 
+[DEBUG] Reversing round 12 with key: 
+[DEBUG] Round 12 reversed result: 
+[DEBUG] Reversing round 11 with key: 
+[DEBUG] Round 11 reversed result: 
+[DEBUG] Reversing round 10 with key: 
+[DEBUG] Round 10 reversed result: 
+[DEBUG] Reversing round 14 with key: 
+[DEBUG] Round 14 reversed result: 
+[DEBUG] Reversing round 8 with key: 
+[DEBUG] Round 8 reversed result: 
+[DEBUG] Reversing round 7 with key: 
+[DEBUG] Round 7 reversed result: 
+[DEBUG] Reversing round 6 with key: 
+[DEBUG] Round 6 reversed result: 
+[DEBUG] Reversing round 13 with key: 
+[DEBUG] Round 13 reversed result: 
+[DEBUG] Reversing round 4 with key: 
+[DEBUG] Round 4 reversed result: 
+[DEBUG] Reversing round 3 with key: 
+[DEBUG] Round 3 reversed result: 
+[DEBUG] Reversing round 2 with key: 
+[DEBUG] Round 2 reversed result: 
+[DEBUG] Reversing round 1 with key: 
+[DEBUG] Round 1 reversed result: 
+[DEBUG] Reversing round 0 with key: 
+[DEBUG] Round 0 reversed result: 

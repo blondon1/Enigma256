@@ -9,6 +9,8 @@
 #include "Parallelism.h"
 #include "SideChannelResistance.h"
 #include "EncryptionMode.h"
+#include "Logger.h"
+
 
 // Core Encryption Algorithm for Enigma256
 
@@ -30,6 +32,7 @@ private:
     Parallelism parallelism;
     SideChannelResistance sideChannelResistance;
     EncryptionMode mode;
+    Logger logger;
 
     std::vector<std::vector<uint8_t>> roundKeys; // Expanded keys for each round
     std::vector<uint8_t> sbox; // Dynamic S-box
