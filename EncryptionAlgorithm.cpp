@@ -8,61 +8,62 @@
 #include "Config.h"
 
 EncryptionAlgorithm::EncryptionAlgorithm(int keySize, EncryptionMode::Mode mode)
-    : keyManagement(keySize), mode(mode, keyManagement.generateRandomKey()), logger(LogLevel::DEBUG) { // Initialize Logger
+    : keyManagement(keySize), mode(mode, keyManagement.generateRandomKey()) {
     std::vector<uint8_t> key = keyManagement.generateRandomKey();
     initialize(key);
 }
 
 void EncryptionAlgorithm::initialize(const std::vector<uint8_t>& key) {
-    logger.log(LogLevel::INFO, "Initializing encryption algorithm with the provided key...");
-
+    std::cout << "Initializing encryption algorithm with the provided key..." << std::endl;
+    
     sbox = sboxGenerator.generateSBox(key);
-    logger.log(LogLevel::DEBUG, "Dynamic S-box generated.");
+    std::cout << "Dynamic S-box generated." << std::endl;
 
     int numRounds = MIN_ROUNDS + (key.size() * 8 / DEFAULT_KEY_SIZE) * (MAX_ROUNDS - MIN_ROUNDS);
     roundKeys = keyManagement.expandKey(key, numRounds);
-    logger.log(LogLevel::DEBUG, "Key expanded for " + std::to_string(numRounds) + " rounds.");
+    std::cout << "Key expanded for " << numRounds << " rounds." << std::endl;
 }
 
 std::vector<uint8_t> EncryptionAlgorithm::encrypt(const std::vector<uint8_t>& data) {
-    Timer timer; 
-    logger.log(LogLevel::INFO, "Entering encrypt function...");
+    Timer timer; // Start the timer
+    std::cout << "Entering encrypt function..." << std::endl;
     std::vector<uint8_t> block = data;
 
+    // Perform encryption
     sideChannelResistance.applyRandomization(block);
     applyRounds(block, true);
 
-    double timeTaken = timer.elapsed(); 
-    logger.log(LogLevel::INFO, "Encryption completed in " + std::to_string(timeTaken) + " ms.");
+    double timeTaken = timer.elapsed(); // Get elapsed time
+    std::cout << "Encryption completed in " << timeTaken << " ms." << std::endl;
 
     return block;
 }
 
 std::vector<uint8_t> EncryptionAlgorithm::decrypt(const std::vector<uint8_t>& data) {
-    Timer timer;
-    logger.log(LogLevel::INFO, "Entering decrypt function...");
+    Timer timer; // Start the timer
+    std::cout << "Entering decrypt function..." << std::endl;
     std::vector<uint8_t> block = data;
 
     applyRounds(block, false);
 
-    double timeTaken = timer.elapsed(); 
-    logger.log(LogLevel::INFO, "Decryption completed in " + std::to_string(timeTaken) + " ms.");
+    double timeTaken = timer.elapsed(); // Get elapsed time
+    std::cout << "Decryption completed in " << timeTaken << " ms." << std::endl;
 
     sideChannelResistance.removeRandomization(block);
     return block;
 }
 
 void EncryptionAlgorithm::applyRounds(std::vector<uint8_t>& block, bool encrypting) {
-    logger.log(LogLevel::INFO, "Starting applyRounds...");
+    std::cout << "Starting applyRounds..." << std::endl;
     int numRounds = roundKeys.size();
 
-    SIMDLevel simdLevel = parallelism.detectBestSIMD(); 
+    SIMDLevel simdLevel = parallelism.detectBestSIMD(); // Detect SIMD level
 
     auto processRound = [&](int round, std::vector<uint8_t>& localBlock) {
         if (encrypting) {
-            logger.log(LogLevel::DEBUG, "Applying round " + std::to_string(round) + " with key: ");
+            std::cout << "Applying round " << round << " with key: ";
         } else {
-            logger.log(LogLevel::DEBUG, "Reversing round " + std::to_string(round) + " with key: ");
+            std::cout << "Reversing round " << round << " with key: ";
         }
 
         for (auto byte : roundKeys[round]) {
@@ -71,12 +72,12 @@ void EncryptionAlgorithm::applyRounds(std::vector<uint8_t>& block, bool encrypti
         std::cout << std::endl;
 
         mixingFunction.applyMixingFunction(localBlock);
-        parallelism.applySIMD(localBlock, simdLevel);
+        parallelism.applySIMD(localBlock, simdLevel); // Pass SIMD level
 
         if (encrypting) {
-            logger.log(LogLevel::DEBUG, "Round " + std::to_string(round) + " result: ");
+            std::cout << "Round " << round << " result: ";
         } else {
-            logger.log(LogLevel::DEBUG, "Round " + std::to_string(round) + " reversed result: ");
+            std::cout << "Round " << round << " reversed result: ";
         }
 
         for (auto byte : localBlock) {
@@ -104,9 +105,21 @@ void EncryptionAlgorithm::applyRounds(std::vector<uint8_t>& block, bool encrypti
         }
     }
 
+    // Join all threads to ensure completion
     for (auto& t : threads) {
         t.join();
     }
 
-    logger.log(LogLevel::INFO, "Completed applyRounds.");
+    std::cout << "Completed applyRounds." << std::endl;
 }
+
+// Add constant-time comparison function
+bool constantTimeCompare(const std::vector<uint8_t>& a, const std::vector<uint8_t>& b) {
+    if (a.size() != b.size()) return false;
+    uint8_t result = 0;
+    for (size_t i = 0; i < a.size(); ++i) {
+        result |= a[i] ^ b[i];
+    }
+    return result == 0;
+}
+
